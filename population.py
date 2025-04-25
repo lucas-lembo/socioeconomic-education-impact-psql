@@ -2,18 +2,16 @@ import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, Double, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from constants import *
+from psycopg2 import *
 
-# Configurações de conexão
-DB_USER = 'seu_usuario'
-DB_PASSWORD = 'sua_senha'
-DB_HOST = 'localhost'
-DB_PORT = '5432'
-DB_NAME = 'seu_banco_de_dados'
 
 # Criar engine do SQLAlchemy
-DATABASE_URL = f'postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+DATABASE_URL = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}/{BASE_NAME}'
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
+
+
 
 # Definir modelos SQLAlchemy
 class Estado(Base):
@@ -267,6 +265,6 @@ def processar_notas(df):
         )
         session.merge(saeb)
 
-if __name__ == '__main__':
+if __name__ == '':
     carregar_dados()
     print("Dados carregados com sucesso!")
