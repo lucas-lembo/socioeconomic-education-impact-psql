@@ -11,8 +11,6 @@ DATABASE_URL = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}/{BASE_NAME}'
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
-
-
 # Definir modelos SQLAlchemy
 class Estado(Base):
     _tablename_ = 'Estado'
@@ -121,8 +119,8 @@ session = Session()
 
 def carregar_dados():
     # Carregar dados das planilhas
-    df_inse = pd.read_excel('Planilha_INSE_Escolas.xlsx')
-    df_divulgacao = pd.read_excel('Planilha_Divulgacao_EM.xlsx')
+    df_inse = pd.read_excel(CSV_ECONOMIC_INDICATORS)
+    df_divulgacao = pd.read_excel(CSV_SCHOOL_PERFORMANCE)
     
     # Processar dados e popular o banco
     processar_estados_municipios(df_inse)
