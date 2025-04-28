@@ -5,6 +5,10 @@ from sqlalchemy.orm import sessionmaker, relationship
 from constants import *
 from psycopg2 import *
 
+from secrets import *
+
+DESEMPENHO_ESCOLAR_CSV = 'datasets/desempenho_escolar.csv'
+INDICADORES_SOCIO_ECONOMICOS_CSV = 'datasets/indicadores_socio_economicos.csv'
 
 # Criar engine do SQLAlchemy
 DATABASE_URL = f'postgresql://{USERNAME}:{PASSWORD}@{HOST}/{BASE_NAME}'
@@ -119,24 +123,24 @@ session = Session()
 
 def carregar_dados():
     # Carregar dados das planilhas
-    df_inse = pd.read_excel(CSV_ECONOMIC_INDICATORS)
-    df_divulgacao = pd.read_excel(CSV_SCHOOL_PERFORMANCE)
+    df_indicadores_se = pd.read_excel(INDICADORES_SOCIO_ECONOMICOS_CSV)
+    df_desempenho_escolar = pd.read_excel(DESEMPENHO_ESCOLAR_CSV, decimal=",")
     
     # Processar dados e popular o banco
-    processar_estados_municipios(df_inse)
-    processar_escolas(df_inse)
-    processar_indicadores(df_inse)
-    processar_taxas_aprovacao(df_divulgacao)
-    processar_notas(df_divulgacao)
+    processar_estados_municipios(df_indicadores_se)
+    processar_escolas(df_indicadores_se)
+    processar_indicadores(df_indicadores_se)
+    processar_taxas_aprovacao(df_desempenho_escolar)
+    processar_notas(df_desempenho_escolar)
     
     session.commit()
+    session.close()
 
 def processar_estados_municipios(df):
     # Processar estados
-    estados = df[['SG_UF', 'NO_UF']].drop_duplicates()
-    for _, row in estados.iterrows():
-        estado = Estado(uf=row['SG_UF'], nome=row['NO_UF'])
-        session.merge(estado)
+    for uf, name in UF_TO_STATE_NAME.keys():
+        estado = Estado(uf=uf, nome=name)
+        session.add(estado)
     
     # Processar municípios
     municipios = df[['CO_MUNICIPIO', 'SG_UF', 'NO_MUNICIPIO', 'TP_CAPITAL']].drop_duplicates()
@@ -145,17 +149,9 @@ def processar_estados_municipios(df):
             idMunicipio=str(row['CO_MUNICIPIO']),
             uf=row['SG_UF'],
             nome=row['NO_MUNICIPIO'],
-            tipoCapital=classificar_tipo_capital(row['TP_CAPITAL'])
+            tipoCapital=row['TP_CAPITAL']
         )
-        session.merge(municipio)
-
-def classificar_tipo_capital(tipo):
-    tipos = {
-        1: "Capital",
-        2: "Interior",
-        3: "Outro"
-    }
-    return tipos.get(tipo, "Outro")
+        session.add(municipio)
 
 def processar_escolas(df):
     escolas = df[['ID_ESCOLA', 'CO_MUNICIPIO', 'NO_ESCOLA', 'TP_CAPITAL']].drop_duplicates()
@@ -164,104 +160,98 @@ def processar_escolas(df):
             idEscola=str(row['ID_ESCOLA']),
             idMunicipio=str(row['CO_MUNICIPIO']),
             nome=row['NO_ESCOLA'],
-            tipoCapital=classificar_tipo_capital(row['TP_CAPITAL'])
+            tipoCapital=row['TP_CAPITAL']
         )
-        session.merge(escola)
+        session.add(escola)
 
-def processar_indicadores(df):
-    # Primeiro, criar níveis de escolaridade (se necessário)
-    niveis_escolaridade = {
-        1: "Sem instrução",
-        2: "Ensino Fundamental Incompleto",
-        3: "Ensino Fundamental Completo",
-        4: "Ensino Médio Incompleto",
-        5: "Ensino Médio Completo",
-        6: "Ensino Superior Incompleto",
-        7: "Ensino Superior Completo",
-        8: "Pós-graduação"
-    }
-    
+def incluir_niveis_escolaridade():
     for id_nivel, descricao in niveis_escolaridade.items():
         nivel = NivelEscolariade(idEscolaridadePais=id_nivel, escolaridade=descricao)
-        session.merge(nivel)
-    
-    # Processar classificações socioeconômicas
-    for i in range(1, 9):
-        classificacao = ClassificacaoSocioEconomica(
-            idClassificacaoSE=i,
-            qtdQuartos=0,  # Valores fictícios - ajuste conforme seus dados
-            qtdCelulares=0,
-            qtdGeladeiras=0,
-            qtdTelevisores=0,
-            qtdBanheiros=0,
-            idEscolaridadePais=i
+        session.add(nivel)
+
+
+def incluir_classificacoes_socio_economicas():
+    for num_nivel, informacoes in niveis_socio_economicos.items():
+        nivelSE = ClassificacaoSocioEconomica(
+            idClassificacaoSE=num_nivel, 
+            qtdGeladeiras=informacoes['qtdGeladeiras'], 
+            qtdTelevisores=informacoes['qtdTelevisores'], 
+            qtdBanheiros=informacoes['qtdBanheiros'], 
+            qtdCelulares=informacoes['qtdCelulares'], 
+            qtdQuartos=informacoes['qtdQuartos'], 
+            qtdCarros=informacoes['qtdCarros'], 
+            qtdComputadores=informacoes['qtdComputadores'], 
+            idEscolaridadePais=informacoes['idEscolaridadePais']
         )
-        session.merge(classificacao)
+        session.add(nivelSE)
+
+def processar_indicadores(df):
+    incluir_niveis_escolaridade()
+    incluir_classificacoes_socio_economicas()
     
     # Processar indicadores de alunos
     for _, row in df.iterrows():
         indicador = IndicadoresAlunos(
-            idIndicadoresAlunos=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])),
+            # idIndicadoresAlunos=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])), TODO: auto incrementado
             qtdAlunosInse=row['QTD_ALUNOS_INSE'],
             anoMedicao=row['NU_ANO_SAEB'],
             idEscola=str(row['ID_ESCOLA'])
         )
-        session.merge(indicador)
+        session.add(indicador)
+        session.flush()
         
         # Processar porcentagens de classificação
         for nivel in range(1, 9):
             porcentagem = row[f'PC_NIVEL_{nivel}']
-            if porcentagem > 0:
-                porc_class = PorcentagemClassificacaoAlunos(
-                    idPorcentagem=int(f"{row['ID_ESCOLA']}{row['NU_ANO_SAEB']}{nivel}"),
-                    idIndicadoresAlunos=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])),
-                    idClassificacaoSE=nivel,
-                    porcentagemAlunos=porcentagem
-                )
-                session.merge(porc_class)
+            porc_class = PorcentagemClassificacaoAlunos(
+                # idPorcentagem=int(f"{row['ID_ESCOLA']}{row['NU_ANO_SAEB']}{nivel}"),
+                idIndicadoresAlunos=indicador.idIndicadoresAlunos,
+                idClassificacaoSE=nivel,
+                porcentagemAlunos=porcentagem
+            )
+            session.add(porc_class)
 
 def processar_taxas_aprovacao(df):
     # Esta função é um exemplo - ajuste conforme os dados reais da planilha Divulgacao EM
     for _, row in df.iterrows():
-        taxa = TaxasAprovacao(
-            idTaxasAprovacao=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])),
-            idEscola=str(row['ID_ESCOLA']),
-            anoMedicao=row['NU_ANO_SAEB'],
-            total=0  # Substitua pelo valor real se disponível
-        )
-        session.merge(taxa)
-        
-        # Exemplo para séries (ajuste conforme necessário)
-        for serie in range(1, 6):
-            aprovacao = AprovacaoSerie(
-                idAprovacaoSerie=int(f"{row['ID_ESCOLA']}{row['NU_ANO_SAEB']}{serie}"),
-                serie=serie,
-                porcentagem=0,  # Substitua pelo valor real
-                idTaxasAprovacao=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB']))
+        for ano in [2017, 2019, 2021, 2023]:
+            taxa = TaxasAprovacao(
+                idEscola=str(row['ID_ESCOLA']),
+                anoMedicao=ano,
+                total=row[f'VL_APROVACAO_{ano}_SI_4']  # Substitua pelo valor real se disponível
             )
-            session.merge(aprovacao)
+            session.add(taxa)
+            session.flush()
+            
+            # Exemplo para séries (ajuste conforme necessário)
+            for serie in range(1, 5):
+                aprovacao = AprovacaoSerie(
+                    serie=serie,
+                    porcentagem=row[f'VL_APROVACAO_{ano}_{serie}'],  # Substitua pelo valor real
+                    idTaxasAprovacao=taxa.idTaxasAprovacao
+                )
+                session.add(aprovacao)
 
 def processar_notas(df):
     for _, row in df.iterrows():
-        # Notas IDEB (ajuste conforme os dados reais)
-        ideb = NotaIDEB(
-            idIdeb=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])),
-            idEscola=str(row['ID_ESCOLA']),
-            notaIdeb=0,  # Substitua pelo valor real
-            anoMedicao=row['NU_ANO_SAEB']
-        )
-        session.merge(ideb)
-        
-        # Notas SAEB (ajuste conforme os dados reais)
-        saeb = NotaSAEB(
-            idSaeb=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])),
-            idEscola=str(row['ID_ESCOLA']),
-            notaMatematica=0,  # Substitua pelo valor real
-            notaLinguaPort=0,  # Substitua pelo valor real
-            notaPadronizada=0,  # Substitua pelo valor real
-            anoMedicao=row['NU_ANO_SAEB']
-        )
-        session.merge(saeb)
+        for ano in [2017, 2019, 2021, 2023]:
+            # Notas IDEB (ajuste conforme os dados reais)
+            ideb = NotaIDEB(
+                idEscola=str(row['ID_ESCOLA']),
+                notaIdeb=row[f'VL_OBSERVADO_{ano}'],  # Substitua pelo valor real
+                anoMedicao=row['NU_ANO_SAEB']
+            )
+            session.add(ideb)
+            
+            # Notas SAEB (ajuste conforme os dados reais)
+            saeb = NotaSAEB(
+                idEscola=str(row['ID_ESCOLA']),
+                notaMatematica=row[f'VL_NOTA_MATEMATICA_{ano}'],  # Substitua pelo valor real
+                notaLinguaPort=row[f'VL_NOTA_PORTUGUES_{ano}'],  # Substitua pelo valor real
+                notaPadronizada=row[f'VL_NOTA_MEDIA_{ano}'],  # Substitua pelo valor real
+                anoMedicao=row['NU_ANO_SAEB']
+            )
+            session.add(saeb)
 
 if __name__ == '':
     carregar_dados()
