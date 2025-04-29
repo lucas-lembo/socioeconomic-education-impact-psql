@@ -1,2 +1,3 @@
 secrets_db.py
 aux.py
+__pycache__/
