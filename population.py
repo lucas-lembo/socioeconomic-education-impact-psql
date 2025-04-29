@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from constants import *
 from psycopg2 import *
 
-from secrets import *
+from secrets_db import *
 
 DESEMPENHO_ESCOLAR_CSV = 'datasets/desempenho_escolar.csv'
 INDICADORES_SOCIO_ECONOMICOS_CSV = 'datasets/indicadores_socio_economicos.csv'
@@ -113,6 +113,7 @@ class AprovacaoSerie(Base):
     porcentagem = Column(Double)
     idTaxasAprovacao = Column(Integer, ForeignKey('TaxasAprovacao.idTaxasAprovacao'))
     taxa_aprovacao = relationship("TaxasAprovacao", back_populates="aprovacoes_serie")
+
 
 # Criar todas as tabelas no banco de dados
 Base.metadata.create_all(engine)
