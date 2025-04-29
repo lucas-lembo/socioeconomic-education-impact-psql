@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import create_engine, Column, Integer, String, Double, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Double, ForeignKey, MetaData, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from constants import *
@@ -197,7 +197,6 @@ def incluir_classificacoes_socio_economicas():
 def incluir_estados():
     # Processar estados
     for uf, name in UF_TO_STATE_NAME.items():
-        print(uf, name)
         estado = Estado(uf=uf, nome=name)
         session.add(estado)
 
@@ -295,13 +294,16 @@ def processar_notas(df):
             session.add(saeb)
 
 if __name__ == '__main__':
+    metadata = MetaData()
+    metadata.reflect(bind=engine)  # Captura todas as tabelas
+
+    with engine.connect() as conn:
+        for table in metadata.tables.values():
+            conn.execute(text(f'''TRUNCATE TABLE "{table.name}" CASCADE;'''))
+
     # carregar_dados()
-    incluir_tipos_capital()
     incluir_estados()
+    incluir_tipos_capital()
     session.commit()
-    session.close()
+    session.close()   
     print("Dados carregados com sucesso!")
-    # estado = Estado(uf='SP', nome='São Paulo')
-    # session.add(estado)
-    # session.commit()
-    # session.close()
