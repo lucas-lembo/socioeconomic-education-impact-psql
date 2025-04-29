@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public."Municipio"
     uf character varying[] COLLATE pg_catalog."default" NOT NULL,
     nome character varying[] COLLATE pg_catalog."default" NOT NULL,
     "tipoCapital" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idTipoCapital" integer NOT NULL,
     CONSTRAINT "Município_pkey" PRIMARY KEY ("idMunicipio")
 );
 
@@ -108,7 +109,6 @@ CREATE TABLE IF NOT EXISTS public."TipoCapital"
 (
     "idTipoCapital" integer NOT NULL,
     nome character varying[] COLLATE pg_catalog."default" NOT NULL,
-    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "TipoCapital_pkey" PRIMARY KEY ("idTipoCapital")
 );
 
@@ -152,6 +152,14 @@ ALTER TABLE IF EXISTS public."Municipio"
     NOT VALID;
 
 
+ALTER TABLE IF EXISTS public."Municipio"
+    ADD CONSTRAINT "idTipoCapital" FOREIGN KEY ("idTipoCapital")
+    REFERENCES public."TipoCapital" ("idTipoCapital") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
 ALTER TABLE IF EXISTS public."NotaIDEB"
     ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
     REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
@@ -187,14 +195,6 @@ ALTER TABLE IF EXISTS public."PorcentagemClassificacaoAlunos"
 ALTER TABLE IF EXISTS public."TaxasAprovacao"
     ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
     REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."TipoCapital"
-    ADD CONSTRAINT "idMunicipio" FOREIGN KEY ("idMunicipio")
-    REFERENCES public."Municipio" ("idMunicipio") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
