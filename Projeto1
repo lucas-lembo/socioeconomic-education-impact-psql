@@ -3,38 +3,13 @@
 BEGIN;
 
 
-CREATE TABLE IF NOT EXISTS public."Estado"
+CREATE TABLE IF NOT EXISTS public."AprovacaoSerie"
 (
-    uf character varying[] NOT NULL,
-    nome character varying[] NOT NULL,
-    PRIMARY KEY (uf)
-);
-
-CREATE TABLE IF NOT EXISTS public."Município"
-(
-    "idMunicipio" character varying[] NOT NULL,
-    uf character varying[] NOT NULL,
-    nome character varying[] NOT NULL,
-    "tipoCapital" character varying[] NOT NULL,
-    PRIMARY KEY ("idMunicipio")
-);
-
-CREATE TABLE IF NOT EXISTS public."Escola"
-(
-    "idEscola" character varying[] NOT NULL,
-    "idMunicipio" character varying[] NOT NULL,
-    nome character varying[] NOT NULL,
-    "tipoCapital" character varying[] NOT NULL,
-    PRIMARY KEY ("idEscola")
-);
-
-CREATE TABLE IF NOT EXISTS public."IndicadoresAlunos"
-(
-    "idIndicadoresAlunos" integer NOT NULL,
-    "qtdAlunosInse" integer NOT NULL,
-    "anoMedicao" integer NOT NULL,
-    "idEscola" character varying[] NOT NULL,
-    PRIMARY KEY ("idIndicadoresAlunos")
+    "idAprovacaoSerie" serial NOT NULL,
+    serie integer NOT NULL,
+    porcentagem double precision NOT NULL,
+    "idTaxasAprovacao" serial NOT NULL,
+    CONSTRAINT "AprovacaoSerie_pkey" PRIMARY KEY ("idAprovacaoSerie")
 );
 
 CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
@@ -46,66 +21,107 @@ CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
     "qtdTelevisores" integer NOT NULL,
     "qtdBanheiros" integer NOT NULL,
     "idEscolaridadePais" integer NOT NULL,
-    PRIMARY KEY ("idClassificacaoSE")
+    CONSTRAINT "ClassificacaoSocioEconomica_pkey" PRIMARY KEY ("idClassificacaoSE")
+);
+
+CREATE TABLE IF NOT EXISTS public."Escola"
+(
+    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "tipoCapital" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Escola_pkey" PRIMARY KEY ("idEscola")
+);
+
+CREATE TABLE IF NOT EXISTS public."Estado"
+(
+    uf character varying[] COLLATE pg_catalog."default" NOT NULL,
+    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Estado_pkey" PRIMARY KEY (uf)
+);
+
+CREATE TABLE IF NOT EXISTS public."IndicadoresAlunos"
+(
+    "idIndicadoresAlunos" serial NOT NULL,
+    "qtdAlunosInse" integer NOT NULL,
+    "anoMedicao" integer NOT NULL,
+    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "IndicadoresAlunos_pkey" PRIMARY KEY ("idIndicadoresAlunos")
+);
+
+CREATE TABLE IF NOT EXISTS public."Município"
+(
+    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    uf character varying[] COLLATE pg_catalog."default" NOT NULL,
+    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "tipoCapital" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Município_pkey" PRIMARY KEY ("idMunicipio")
 );
 
 CREATE TABLE IF NOT EXISTS public."NivelEscolariade"
 (
     "idEscolaridadePais" integer NOT NULL,
-    escolaridade character varying[] NOT NULL,
-    PRIMARY KEY ("idEscolaridadePais")
-);
-
-CREATE TABLE IF NOT EXISTS public."PorcentagemClassificacaoAlunos"
-(
-    "idPorcentagem" integer NOT NULL,
-    "idIndicadoresAlunos" integer NOT NULL,
-    "idClassificacaoSE" integer NOT NULL,
-    "porcentagemAlunos" double precision NOT NULL,
-    PRIMARY KEY ("idPorcentagem")
-);
-
-CREATE TABLE IF NOT EXISTS public."TaxasAprovacao"
-(
-    "idTaxasAprovacao" integer NOT NULL,
-    "idEscola" character varying[] NOT NULL,
-    "anoMedicao" integer NOT NULL,
-    total double precision NOT NULL,
-    PRIMARY KEY ("idTaxasAprovacao")
+    escolaridade character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "NivelEscolariade_pkey" PRIMARY KEY ("idEscolaridadePais")
 );
 
 CREATE TABLE IF NOT EXISTS public."NotaIDEB"
 (
-    "idIdeb" integer NOT NULL,
-    "idEscola" character varying[] NOT NULL,
+    "idIdeb" serial NOT NULL,
+    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
     "notaIdeb" double precision,
     "anoMedicao" integer NOT NULL,
-    PRIMARY KEY ("idIdeb")
+    CONSTRAINT "NotaIDEB_pkey" PRIMARY KEY ("idIdeb")
 );
 
 CREATE TABLE IF NOT EXISTS public."NotaSAEB"
 (
-    "idSaeb" integer NOT NULL,
-    "idEscola" character varying[] NOT NULL,
+    "idSaeb" serial NOT NULL,
+    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
     "notaMatematica" double precision,
     "notaLinguaPort" double precision,
     "notaPadronizada" double precision,
     "anoMedicao" integer NOT NULL,
-    PRIMARY KEY ("idSaeb")
+    CONSTRAINT "NotaSAEB_pkey" PRIMARY KEY ("idSaeb")
 );
 
-CREATE TABLE IF NOT EXISTS public."AprovacaoSerie"
+CREATE TABLE IF NOT EXISTS public."PorcentagemClassificacaoAlunos"
 (
-    "idAprovacaoSerie" integer NOT NULL,
-    serie integer NOT NULL,
-    porcentagem double precision NOT NULL,
-    "idTaxasAprovacao" integer NOT NULL,
-    PRIMARY KEY ("idAprovacaoSerie")
+    "idPorcentagem" serial NOT NULL,
+    "idIndicadoresAlunos" serial NOT NULL,
+    "idClassificacaoSE" integer NOT NULL,
+    "porcentagemAlunos" double precision NOT NULL,
+    CONSTRAINT "PorcentagemClassificacaoAlunos_pkey" PRIMARY KEY ("idPorcentagem")
 );
 
-ALTER TABLE IF EXISTS public."Município"
-    ADD FOREIGN KEY (uf)
-    REFERENCES public."Estado" (uf) MATCH SIMPLE
+CREATE TABLE IF NOT EXISTS public."TaxasAprovacao"
+(
+    "idTaxasAprovacao" serial NOT NULL,
+    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "anoMedicao" integer NOT NULL,
+    total double precision NOT NULL,
+    CONSTRAINT "TaxasAprovacao_pkey" PRIMARY KEY ("idTaxasAprovacao")
+);
+
+CREATE TABLE IF NOT EXISTS public."TipoCapital"
+(
+    "idTipoCapital" integer NOT NULL,
+    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "TipoCapital_pkey" PRIMARY KEY ("idTipoCapital")
+);
+
+ALTER TABLE IF EXISTS public."AprovacaoSerie"
+    ADD CONSTRAINT "idTaxasAprovacao" FOREIGN KEY ("idTaxasAprovacao")
+    REFERENCES public."TaxasAprovacao" ("idTaxasAprovacao") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."ClassificacaoSocioEconomica"
+    ADD CONSTRAINT "idEscolaridadePais" FOREIGN KEY ("idEscolaridadePais")
+    REFERENCES public."NivelEscolariade" ("idEscolaridadePais") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -127,9 +143,25 @@ ALTER TABLE IF EXISTS public."IndicadoresAlunos"
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public."ClassificacaoSocioEconomica"
-    ADD CONSTRAINT "idEscolaridadePais" FOREIGN KEY ("idEscolaridadePais")
-    REFERENCES public."NivelEscolariade" ("idEscolaridadePais") MATCH SIMPLE
+ALTER TABLE IF EXISTS public."Município"
+    ADD CONSTRAINT "Município_uf_fkey" FOREIGN KEY (uf)
+    REFERENCES public."Estado" (uf) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."NotaIDEB"
+    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
+    REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."NotaSAEB"
+    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
+    REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -159,25 +191,9 @@ ALTER TABLE IF EXISTS public."TaxasAprovacao"
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public."NotaIDEB"
-    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
-    REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."NotaSAEB"
-    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
-    REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."AprovacaoSerie"
-    ADD CONSTRAINT "idTaxasAprovacao" FOREIGN KEY ("idTaxasAprovacao")
-    REFERENCES public."TaxasAprovacao" ("idTaxasAprovacao") MATCH SIMPLE
+ALTER TABLE IF EXISTS public."TipoCapital"
+    ADD CONSTRAINT "idMunicipio" FOREIGN KEY ("idMunicipio")
+    REFERENCES public."Município" ("idMunicipio") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;

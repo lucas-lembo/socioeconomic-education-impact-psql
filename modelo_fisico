@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
     "qtdTelevisores" integer NOT NULL,
     "qtdBanheiros" integer NOT NULL,
     "idEscolaridadePais" integer NOT NULL,
+    "qtdComputadores" integer NOT NULL,
+    "qtdCarros" integer NOT NULL,
     CONSTRAINT "ClassificacaoSocioEconomica_pkey" PRIMARY KEY ("idClassificacaoSE")
 );
 
@@ -29,7 +31,6 @@ CREATE TABLE IF NOT EXISTS public."Escola"
     "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
     "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
     nome character varying[] COLLATE pg_catalog."default" NOT NULL,
-    "tipoCapital" character varying[] COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Escola_pkey" PRIMARY KEY ("idEscola")
 );
 
@@ -106,9 +107,9 @@ CREATE TABLE IF NOT EXISTS public."TaxasAprovacao"
 CREATE TABLE IF NOT EXISTS public."TipoCapital"
 (
     "idTipoCapital" integer NOT NULL,
-    nome character varying[] NOT NULL,
-    "idMunicipio" character varying[] NOT NULL,
-    PRIMARY KEY ("idTipoCapital")
+    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "TipoCapital_pkey" PRIMARY KEY ("idTipoCapital")
 );
 
 ALTER TABLE IF EXISTS public."AprovacaoSerie"
