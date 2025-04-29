@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
     "qtdTelevisores" integer NOT NULL,
     "qtdBanheiros" integer NOT NULL,
     "idEscolaridadePais" integer NOT NULL,
+    "qtdCarros" integer NOT NULL,
+    "qtdComputadores" integer NOT NULL,
     CONSTRAINT "ClassificacaoSocioEconomica_pkey" PRIMARY KEY ("idClassificacaoSE")
 );
 
@@ -29,7 +31,6 @@ CREATE TABLE IF NOT EXISTS public."Escola"
     "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
     nome character varying COLLATE pg_catalog."default" NOT NULL,
-    "tipoCapital" character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Escola_pkey" PRIMARY KEY ("idEscola")
 );
 
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS public."Município"
     "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
     uf character varying COLLATE pg_catalog."default" NOT NULL,
     nome character varying COLLATE pg_catalog."default" NOT NULL,
-    "idTipoCapital" character varying COLLATE pg_catalog."default" NOT NULL,
+    "idTipoCapital" integer COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Município_pkey" PRIMARY KEY ("idMunicipio")
 );
 
@@ -151,7 +152,7 @@ ALTER TABLE IF EXISTS public."Município"
 
 
 ALTER TABLE IF EXISTS public."Município"
-    ADD FOREIGN KEY ("idTipoCapital")
+    ADD CONSTRAINT "idTipoCapital" FOREIGN KEY ("idTipoCapital")
     REFERENCES public."TipoCapital" ("idTipoCapital") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION

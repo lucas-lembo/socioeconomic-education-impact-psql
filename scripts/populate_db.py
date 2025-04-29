@@ -155,8 +155,8 @@ session = Session()
 
 def carregar_dados():
     # Carregar dados das planilhas
-    df_indicadores_se = pd.read_excel(INDICADORES_SOCIO_ECONOMICOS_CSV)
-    df_desempenho_escolar = pd.read_excel(DESEMPENHO_ESCOLAR_CSV, decimal=",")
+    df_indicadores_se = pd.read_csv(INDICADORES_SOCIO_ECONOMICOS_CSV)
+    df_desempenho_escolar = pd.read_csv(DESEMPENHO_ESCOLAR_CSV, decimal=",")
     
     # Processar dados e popular o banco
     processar_estados_municipios(df_indicadores_se)
@@ -169,7 +169,7 @@ def carregar_dados():
     session.close()
 
 def incluir_tipos_capital():
-    for id, nome in tipos_capital.keys():
+    for id, nome in tipos_capital.items():
         tipoCapital = TipoCapital(idTipoCapital=id, nome=nome)
         session.add(tipoCapital)
 
@@ -194,13 +194,16 @@ def incluir_classificacoes_socio_economicas():
         )
         session.add(nivelSE)
 
-def processar_estados_municipios(df):
-    incluir_tipos_capital()
-
+def incluir_estados():
     # Processar estados
-    for uf, name in UF_TO_STATE_NAME.keys():
+    for uf, name in UF_TO_STATE_NAME.items():
+        print(uf, name)
         estado = Estado(uf=uf, nome=name)
         session.add(estado)
+
+def processar_estados_municipios(df):
+    incluir_tipos_capital()
+    incluir_estados()
     
     # Processar Municipios
     municipios = df[['CO_MUNICIPIO', 'SG_UF', 'NO_MUNICIPIO', 'TP_CAPITAL']].drop_duplicates()
@@ -291,6 +294,14 @@ def processar_notas(df):
             )
             session.add(saeb)
 
-if __name__ == '':
-    carregar_dados()
+if __name__ == '__main__':
+    # carregar_dados()
+    incluir_tipos_capital()
+    incluir_estados()
+    session.commit()
+    session.close()
     print("Dados carregados com sucesso!")
+    # estado = Estado(uf='SP', nome='São Paulo')
+    # session.add(estado)
+    # session.commit()
+    # session.close()
