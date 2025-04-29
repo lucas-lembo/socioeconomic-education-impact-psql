@@ -57,7 +57,7 @@ class Escola(Base):
     taxas_aprovacao = relationship("TaxasAprovacao", back_populates="escola")
 
 class NivelEscolaridade(Base):
-    __tablename__ = 'NivelEscolariade'
+    __tablename__ = 'NivelEscolaridade'
     
     idEscolaridadePais = Column(Integer, primary_key=True)
     escolaridade = Column(String)
@@ -73,7 +73,7 @@ class ClassificacaoSocioEconomica(Base):
     qtdGeladeiras = Column(Integer)
     qtdTelevisores = Column(Integer)
     qtdBanheiros = Column(Integer)
-    idEscolaridadePais = Column(Integer, ForeignKey('NivelEscolariade.idEscolaridadePais'))
+    idEscolaridadePais = Column(Integer, ForeignKey('NivelEscolaridade.idEscolaridadePais'))
     qtdComputadores = Column(Integer)
     qtdCarros = Column(Integer)
     
@@ -161,7 +161,7 @@ def carregar_dados():
     # Processar dados e popular o banco
     processar_estados_municipios(df_indicadores_se)
     processar_escolas(df_indicadores_se)
-    # processar_indicadores(df_indicadores_se)
+    processar_indicadores(df_indicadores_se)
     processar_taxas_aprovacao(df_desempenho_escolar)
     processar_notas(df_desempenho_escolar)
     
@@ -225,6 +225,7 @@ def processar_estados_municipios(df):
 
 def processar_escolas(df):
     escolas = df[['ID_ESCOLA', 'CO_MUNICIPIO', 'NO_ESCOLA', 'TP_CAPITAL']].drop_duplicates()
+    counter = 0
     for _, row in escolas.iterrows():
         escola = Escola(
             idEscola=str(row['ID_ESCOLA']),
@@ -232,7 +233,8 @@ def processar_escolas(df):
             nome=row['NO_ESCOLA'],
         )
         session.add(escola)
-        print(f'Escola {escola.nome} inserida!')
+        print(f'{counter}: Escola {escola.nome} inserida!')
+        counter+=1
 
     print('Escolas inseridos!')
 
@@ -241,6 +243,7 @@ def processar_indicadores(df):
     incluir_classificacoes_socio_economicas()
     
     # Processar indicadores de alunos
+    counter=0
     for _, row in df.iterrows():
         indicador = IndicadoresAlunos(
             qtdAlunosInse=row['QTD_ALUNOS_INSE'],
@@ -260,18 +263,19 @@ def processar_indicadores(df):
             )
             session.add(porc_class)
 
-        print(f'Indicadores da escola {indicador.idEscola} inseridos!')
-
+        print(f'{counter}: Indicadores da escola de ID {indicador.idEscola} inseridos!')
+        counter += 1
 
     print('Indicadores inseridos!')
 
 
 def processar_taxas_aprovacao(df):
     # Esta função é um exemplo - ajuste conforme os dados reais da planilha Divulgacao EM
+    counter = 0
     for _, row in df.iterrows():
         for ano in [2017, 2019, 2021, 2023]:
             total = row[f'VL_APROVACAO_{ano}_SI_4']
-            total = total if total != '-' else None
+            total = total if total not in ['-', 'ND', 'ND***'] else None
             taxa = TaxasAprovacao(
                 idEscola=str(row['ID_ESCOLA']),
                 anoMedicao=ano,
@@ -283,61 +287,53 @@ def processar_taxas_aprovacao(df):
             # Exemplo para séries (ajuste conforme necessário)
             for serie in range(1, 5):
                 porcentagem = row[f'VL_APROVACAO_{ano}_{serie}']
-                porcentagem = porcentagem if porcentagem != '-' else None
+                porcentagem = porcentagem if porcentagem not in ['-', 'ND', 'ND***'] else None
                 aprovacao = AprovacaoSerie(
                     serie=serie,
                     porcentagem=porcentagem,  # Substitua pelo valor real
                     idTaxasAprovacao=taxa.idTaxasAprovacao
                 )
                 session.add(aprovacao)
-        print(f'Taxa aprovacao {taxa.escola} inserida!')
+        print(f'{counter}: Taxa aprovacao {taxa.escola.nome} inserida!')
+        counter += 1
 
     print('TaxasAprovacao inseridos!')
 
 def processar_notas(df):
+    counter = 0
     for _, row in df.iterrows():
         for ano in [2017, 2019, 2021, 2023]:
             notaIdeb = row[f'VL_OBSERVADO_{ano}']
-            notaIdeb = notaIdeb if notaIdeb != '-' else None
+            notaIdeb = notaIdeb if notaIdeb not in ['-', 'ND', 'ND***'] else None
             # Notas IDEB (ajuste conforme os dados reais)
             ideb = NotaIDEB(
                 idEscola=str(row['ID_ESCOLA']),
                 notaIdeb=notaIdeb,  # Substitua pelo valor real
-                anoMedicao=row['NU_ANO_SAEB']
+                anoMedicao=ano
             )
             session.add(ideb)
             
             # Notas SAEB (ajuste conforme os dados reais)
             notaMatematica = row[f'VL_NOTA_MATEMATICA_{ano}']
-            notaMatematica = notaMatematica if notaMatematica != '-' else None
+            notaMatematica = notaMatematica if notaMatematica not in ['-', 'ND', 'ND***'] else None
             notaPortugues = row[f'VL_NOTA_PORTUGUES_{ano}']
-            notaPortugues = notaPortugues if notaPortugues != '-' else None
+            notaPortugues = notaPortugues if notaPortugues not in ['-', 'ND', 'ND***'] else None
             notaPadronizada = row[f'VL_NOTA_MEDIA_{ano}']
-            notaPadronizada = notaPadronizada if notaPadronizada != '-' else None
+            notaPadronizada = notaPadronizada if notaPadronizada not in ['-', 'ND', 'ND***'] else None
             saeb = NotaSAEB(
                 idEscola=str(row['ID_ESCOLA']),
                 notaMatematica=notaMatematica,  # Substitua pelo valor real
                 notaLinguaPort=notaPortugues,  # Substitua pelo valor real
                 notaPadronizada=notaPadronizada,  # Substitua pelo valor real
-                anoMedicao=row['NU_ANO_SAEB']
+                anoMedicao=ano
             )
             session.add(saeb)
-        print(f'Notas SAEB e IDEB {ideb.escola} inserida!')
+        print(f'{counter}: Notas SAEB e IDEB {ideb.idEscola} inserida!')
+        counter += 1
 
     print('Notas inseridos!')
 
 
 if __name__ == '__main__':
-    metadata = MetaData()
-    metadata.reflect(bind=engine)  # Captura todas as tabelas
-
-    # with engine.connect() as conn:
-    #     for table in metadata.tables.values():
-    #         print(f'''TRUNCATE TABLE "{table.name}" CASCADE;''')
-
     carregar_dados()
-    # incluir_estados()
-    # incluir_tipos_capital()
-    # session.commit()
-    # session.close()   
     print("Dados carregados com sucesso!")
