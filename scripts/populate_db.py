@@ -273,7 +273,7 @@ def processar_taxas_aprovacao(df):
             total = row[f'VL_APROVACAO_{ano}_SI_4']
             total = total if total != '-' else None
             taxa = TaxasAprovacao(
-                idEscola=int(row['ID_ESCOLA']),
+                idEscola=str(row['ID_ESCOLA']),
                 anoMedicao=ano,
                 total=total  # Substitua pelo valor real se disponível
             )

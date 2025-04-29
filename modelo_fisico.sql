@@ -135,8 +135,7 @@ ALTER TABLE IF EXISTS public."Escola"
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public."IndicadoresAlunos"
-    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
+ALTER TABLE IF EXISTS pdEscola")
     REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
