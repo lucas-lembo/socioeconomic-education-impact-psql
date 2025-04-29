@@ -172,11 +172,13 @@ def incluir_tipos_capital():
     for id, nome in tipos_capital.items():
         tipoCapital = TipoCapital(idTipoCapital=id, nome=nome)
         session.add(tipoCapital)
+    print('TipoCapital inseridos!')
 
 def incluir_niveis_escolaridade():
     for id_nivel, descricao in niveis_escolaridade.items():
         nivel = NivelEscolaridade(idEscolaridadePais=id_nivel, escolaridade=descricao)
         session.add(nivel)
+    print('Nivel Escolaridade inseridos!')
 
 
 def incluir_classificacoes_socio_economicas():
@@ -193,12 +195,15 @@ def incluir_classificacoes_socio_economicas():
             idEscolaridadePais=informacoes['idEscolaridadePais']
         )
         session.add(nivelSE)
+    print('ClassificacoesSE inseridos!')
+
 
 def incluir_estados():
     # Processar estados
     for uf, name in UF_TO_STATE_NAME.items():
         estado = Estado(uf=uf, nome=name)
         session.add(estado)
+    print('Estados inseridos!')
 
 def processar_estados_municipios(df):
     incluir_tipos_capital()
@@ -214,6 +219,9 @@ def processar_estados_municipios(df):
             idTipoCapital=row['TP_CAPITAL']
         )
         session.add(municipio)
+    
+    print('Municipios inseridos!')
+
 
 def processar_escolas(df):
     escolas = df[['ID_ESCOLA', 'CO_MUNICIPIO', 'NO_ESCOLA', 'TP_CAPITAL']].drop_duplicates()
@@ -224,6 +232,9 @@ def processar_escolas(df):
             nome=row['NO_ESCOLA'],
         )
         session.add(escola)
+        print(f'Escola {escola.nome} inserida!')
+
+    print('Escolas inseridos!')
 
 def processar_indicadores(df):
     incluir_niveis_escolaridade()
@@ -232,7 +243,6 @@ def processar_indicadores(df):
     # Processar indicadores de alunos
     for _, row in df.iterrows():
         indicador = IndicadoresAlunos(
-            # idIndicadoresAlunos=int(row['ID_ESCOLA'] + str(row['NU_ANO_SAEB'])), TODO: auto incrementado
             qtdAlunosInse=row['QTD_ALUNOS_INSE'],
             anoMedicao=row['NU_ANO_SAEB'],
             idEscola=str(row['ID_ESCOLA'])
@@ -244,12 +254,17 @@ def processar_indicadores(df):
         for nivel in range(1, 9):
             porcentagem = row[f'PC_NIVEL_{nivel}']
             porc_class = PorcentagemClassificacaoAlunos(
-                # idPorcentagem=int(f"{row['ID_ESCOLA']}{row['NU_ANO_SAEB']}{nivel}"),
                 idIndicadoresAlunos=indicador.idIndicadoresAlunos,
                 idClassificacaoSE=nivel,
                 porcentagemAlunos=porcentagem
             )
             session.add(porc_class)
+
+        print(f'Indicadores da escola {indicador.idEscola} inseridos!')
+
+
+    print('Indicadores inseridos!')
+
 
 def processar_taxas_aprovacao(df):
     # Esta função é um exemplo - ajuste conforme os dados reais da planilha Divulgacao EM
@@ -271,6 +286,8 @@ def processar_taxas_aprovacao(df):
                     idTaxasAprovacao=taxa.idTaxasAprovacao
                 )
                 session.add(aprovacao)
+    print('TaxasAprovacao inseridos!')
+
 
 def processar_notas(df):
     for _, row in df.iterrows():
@@ -292,18 +309,20 @@ def processar_notas(df):
                 anoMedicao=row['NU_ANO_SAEB']
             )
             session.add(saeb)
+    print('Notas inseridos!')
+
 
 if __name__ == '__main__':
     metadata = MetaData()
     metadata.reflect(bind=engine)  # Captura todas as tabelas
 
-    with engine.connect() as conn:
-        for table in metadata.tables.values():
-            conn.execute(text(f'''TRUNCATE TABLE "{table.name}" CASCADE;'''))
+    # with engine.connect() as conn:
+    #     for table in metadata.tables.values():
+    #         print(f'''TRUNCATE TABLE "{table.name}" CASCADE;''')
 
-    # carregar_dados()
-    incluir_estados()
-    incluir_tipos_capital()
-    session.commit()
-    session.close()   
+    carregar_dados()
+    # incluir_estados()
+    # incluir_tipos_capital()
+    # session.commit()
+    # session.close()   
     print("Dados carregados com sucesso!")
