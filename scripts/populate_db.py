@@ -156,12 +156,12 @@ session = Session()
 def carregar_dados():
     # Carregar dados das planilhas
     df_indicadores_se = pd.read_csv(INDICADORES_SOCIO_ECONOMICOS_CSV)
-    df_desempenho_escolar = pd.read_csv(DESEMPENHO_ESCOLAR_CSV, decimal=",")
+    df_desempenho_escolar = pd.read_csv(DESEMPENHO_ESCOLAR_CSV)
     
     # Processar dados e popular o banco
     processar_estados_municipios(df_indicadores_se)
     processar_escolas(df_indicadores_se)
-    processar_indicadores(df_indicadores_se)
+    # processar_indicadores(df_indicadores_se)
     processar_taxas_aprovacao(df_desempenho_escolar)
     processar_notas(df_desempenho_escolar)
     
@@ -270,45 +270,60 @@ def processar_taxas_aprovacao(df):
     # Esta função é um exemplo - ajuste conforme os dados reais da planilha Divulgacao EM
     for _, row in df.iterrows():
         for ano in [2017, 2019, 2021, 2023]:
+            total = row[f'VL_APROVACAO_{ano}_SI_4']
+            total = total if total != '-' else None
             taxa = TaxasAprovacao(
-                idEscola=str(row['ID_ESCOLA']),
+                idEscola=int(row['ID_ESCOLA']),
                 anoMedicao=ano,
-                total=row[f'VL_APROVACAO_{ano}_SI_4']  # Substitua pelo valor real se disponível
+                total=total  # Substitua pelo valor real se disponível
             )
             session.add(taxa)
             session.flush()
             
             # Exemplo para séries (ajuste conforme necessário)
             for serie in range(1, 5):
+                porcentagem = row[f'VL_APROVACAO_{ano}_{serie}']
+                porcentagem = porcentagem if porcentagem != '-' else None
                 aprovacao = AprovacaoSerie(
                     serie=serie,
-                    porcentagem=row[f'VL_APROVACAO_{ano}_{serie}'],  # Substitua pelo valor real
+                    porcentagem=porcentagem,  # Substitua pelo valor real
                     idTaxasAprovacao=taxa.idTaxasAprovacao
                 )
                 session.add(aprovacao)
-    print('TaxasAprovacao inseridos!')
+        print(f'Taxa aprovacao {taxa.escola} inserida!')
 
+    print('TaxasAprovacao inseridos!')
 
 def processar_notas(df):
     for _, row in df.iterrows():
         for ano in [2017, 2019, 2021, 2023]:
+            notaIdeb = row[f'VL_OBSERVADO_{ano}']
+            notaIdeb = notaIdeb if notaIdeb != '-' else None
             # Notas IDEB (ajuste conforme os dados reais)
             ideb = NotaIDEB(
                 idEscola=str(row['ID_ESCOLA']),
-                notaIdeb=row[f'VL_OBSERVADO_{ano}'],  # Substitua pelo valor real
+                notaIdeb=notaIdeb,  # Substitua pelo valor real
                 anoMedicao=row['NU_ANO_SAEB']
             )
             session.add(ideb)
             
             # Notas SAEB (ajuste conforme os dados reais)
+            notaMatematica = row[f'VL_NOTA_MATEMATICA_{ano}']
+            notaMatematica = notaMatematica if notaMatematica != '-' else None
+            notaPortugues = row[f'VL_NOTA_PORTUGUES_{ano}']
+            notaPortugues = notaPortugues if notaPortugues != '-' else None
+            notaPadronizada = row[f'VL_NOTA_MEDIA_{ano}']
+            notaPadronizada = notaPadronizada if notaPadronizada != '-' else None
             saeb = NotaSAEB(
                 idEscola=str(row['ID_ESCOLA']),
-                notaMatematica=row[f'VL_NOTA_MATEMATICA_{ano}'],  # Substitua pelo valor real
-                notaLinguaPort=row[f'VL_NOTA_PORTUGUES_{ano}'],  # Substitua pelo valor real
-                notaPadronizada=row[f'VL_NOTA_MEDIA_{ano}'],  # Substitua pelo valor real
+                notaMatematica=notaMatematica,  # Substitua pelo valor real
+                notaLinguaPort=notaPortugues,  # Substitua pelo valor real
+                notaPadronizada=notaPadronizada,  # Substitua pelo valor real
                 anoMedicao=row['NU_ANO_SAEB']
             )
             session.add(saeb)
+        print(f'Notas SAEB e IDEB {ideb.escola} inserida!')
+
     print('Notas inseridos!')
 
 
