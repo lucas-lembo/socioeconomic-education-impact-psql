@@ -21,23 +21,22 @@ CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
     "qtdTelevisores" integer NOT NULL,
     "qtdBanheiros" integer NOT NULL,
     "idEscolaridadePais" integer NOT NULL,
-    "qtdComputadores" integer NOT NULL,
-    "qtdCarros" integer NOT NULL,
     CONSTRAINT "ClassificacaoSocioEconomica_pkey" PRIMARY KEY ("idClassificacaoSE")
 );
 
 CREATE TABLE IF NOT EXISTS public."Escola"
 (
-    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
-    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
-    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
+    "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
+    nome character varying COLLATE pg_catalog."default" NOT NULL,
+    "tipoCapital" character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Escola_pkey" PRIMARY KEY ("idEscola")
 );
 
 CREATE TABLE IF NOT EXISTS public."Estado"
 (
-    uf character varying[] COLLATE pg_catalog."default" NOT NULL,
-    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    uf character varying COLLATE pg_catalog."default" NOT NULL,
+    nome character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Estado_pkey" PRIMARY KEY (uf)
 );
 
@@ -46,31 +45,30 @@ CREATE TABLE IF NOT EXISTS public."IndicadoresAlunos"
     "idIndicadoresAlunos" serial NOT NULL,
     "qtdAlunosInse" integer NOT NULL,
     "anoMedicao" integer NOT NULL,
-    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "IndicadoresAlunos_pkey" PRIMARY KEY ("idIndicadoresAlunos")
 );
 
-CREATE TABLE IF NOT EXISTS public."Municipio"
+CREATE TABLE IF NOT EXISTS public."Município"
 (
-    "idMunicipio" character varying[] COLLATE pg_catalog."default" NOT NULL,
-    uf character varying[] COLLATE pg_catalog."default" NOT NULL,
-    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
-    "tipoCapital" character varying[] COLLATE pg_catalog."default" NOT NULL,
-    "idTipoCapital" integer NOT NULL,
+    "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
+    uf character varying COLLATE pg_catalog."default" NOT NULL,
+    nome character varying COLLATE pg_catalog."default" NOT NULL,
+    "tipoCapital" character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "Município_pkey" PRIMARY KEY ("idMunicipio")
 );
 
 CREATE TABLE IF NOT EXISTS public."NivelEscolariade"
 (
     "idEscolaridadePais" integer NOT NULL,
-    escolaridade character varying[] COLLATE pg_catalog."default" NOT NULL,
+    escolaridade character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "NivelEscolariade_pkey" PRIMARY KEY ("idEscolaridadePais")
 );
 
 CREATE TABLE IF NOT EXISTS public."NotaIDEB"
 (
     "idIdeb" serial NOT NULL,
-    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     "notaIdeb" double precision,
     "anoMedicao" integer NOT NULL,
     CONSTRAINT "NotaIDEB_pkey" PRIMARY KEY ("idIdeb")
@@ -79,7 +77,7 @@ CREATE TABLE IF NOT EXISTS public."NotaIDEB"
 CREATE TABLE IF NOT EXISTS public."NotaSAEB"
 (
     "idSaeb" serial NOT NULL,
-    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     "notaMatematica" double precision,
     "notaLinguaPort" double precision,
     "notaPadronizada" double precision,
@@ -99,7 +97,7 @@ CREATE TABLE IF NOT EXISTS public."PorcentagemClassificacaoAlunos"
 CREATE TABLE IF NOT EXISTS public."TaxasAprovacao"
 (
     "idTaxasAprovacao" serial NOT NULL,
-    "idEscola" character varying[] COLLATE pg_catalog."default" NOT NULL,
+    "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     "anoMedicao" integer NOT NULL,
     total double precision NOT NULL,
     CONSTRAINT "TaxasAprovacao_pkey" PRIMARY KEY ("idTaxasAprovacao")
@@ -108,7 +106,8 @@ CREATE TABLE IF NOT EXISTS public."TaxasAprovacao"
 CREATE TABLE IF NOT EXISTS public."TipoCapital"
 (
     "idTipoCapital" integer NOT NULL,
-    nome character varying[] COLLATE pg_catalog."default" NOT NULL,
+    nome character varying COLLATE pg_catalog."default" NOT NULL,
+    "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "TipoCapital_pkey" PRIMARY KEY ("idTipoCapital")
 );
 
@@ -130,7 +129,7 @@ ALTER TABLE IF EXISTS public."ClassificacaoSocioEconomica"
 
 ALTER TABLE IF EXISTS public."Escola"
     ADD CONSTRAINT "idMunicipio" FOREIGN KEY ("idMunicipio")
-    REFERENCES public."Municipio" ("idMunicipio") MATCH SIMPLE
+    REFERENCES public."Município" ("idMunicipio") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -144,17 +143,9 @@ ALTER TABLE IF EXISTS public."IndicadoresAlunos"
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public."Municipio"
+ALTER TABLE IF EXISTS public."Município"
     ADD CONSTRAINT "Município_uf_fkey" FOREIGN KEY (uf)
     REFERENCES public."Estado" (uf) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public."Municipio"
-    ADD CONSTRAINT "idTipoCapital" FOREIGN KEY ("idTipoCapital")
-    REFERENCES public."TipoCapital" ("idTipoCapital") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -195,6 +186,14 @@ ALTER TABLE IF EXISTS public."PorcentagemClassificacaoAlunos"
 ALTER TABLE IF EXISTS public."TaxasAprovacao"
     ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
     REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."TipoCapital"
+    ADD CONSTRAINT "idMunicipio" FOREIGN KEY ("idMunicipio")
+    REFERENCES public."Município" ("idMunicipio") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
