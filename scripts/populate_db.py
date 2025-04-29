@@ -4,7 +4,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from constants import *
 from psycopg2 import *
-
 from secrets_db import *
 
 DESEMPENHO_ESCOLAR_CSV = 'datasets/desempenho_escolar.csv'
@@ -17,103 +16,109 @@ Base = declarative_base()
 
 # Definir modelos SQLAlchemy
 class Estado(Base):
-    _tablename_ = 'Estado'
+    __tablename__ = 'Estado'
     uf = Column(String, primary_key=True)
-    nome = Column(String)
+    nome = Column(String, nullable=False)
     municipios = relationship("Municipio", back_populates="estado")
 
 class Municipio(Base):
-    _tablename_ = 'Município'
+    __tablename__ = 'Município'
     idMunicipio = Column(String, primary_key=True)
-    uf = Column(String, ForeignKey('Estado.uf'))
-    nome = Column(String)
-    tipoCapital = Column(String)
+    uf = Column(String, ForeignKey('Estado.uf'), nullable=False)
+    nome = Column(String, nullable=False)
+    tipoCapital = Column(String, nullable=False)
     estado = relationship("Estado", back_populates="municipios")
     escolas = relationship("Escola", back_populates="municipio")
+    tipos_capital = relationship("TipoCapital", back_populates="municipio")
 
 class Escola(Base):
-    _tablename_ = 'Escola'
+    __tablename__ = 'Escola'
     idEscola = Column(String, primary_key=True)
-    idMunicipio = Column(String, ForeignKey('Município.idMunicipio'))
-    nome = Column(String)
-    tipoCapital = Column(String)
+    idMunicipio = Column(String, ForeignKey('Município.idMunicipio'), nullable=False)
+    nome = Column(String, nullable=False)
     municipio = relationship("Municipio", back_populates="escolas")
-    indicadores = relationship("IndicadoresAlunos", back_populates="escola")
-    taxas_aprovacao = relationship("TaxasAprovacao", back_populates="escola")
+    indicadores_alunos = relationship("IndicadoresAlunos", back_populates="escola")
     notas_ideb = relationship("NotaIDEB", back_populates="escola")
     notas_saeb = relationship("NotaSAEB", back_populates="escola")
+    taxas_aprovacao = relationship("TaxasAprovacao", back_populates="escola")
 
-class IndicadoresAlunos(Base):
-    _tablename_ = 'IndicadoresAlunos'
-    idIndicadoresAlunos = Column(Integer, primary_key=True)
-    qtdAlunosInse = Column(Integer)
-    anoMedicao = Column(Integer)
-    idEscola = Column(String, ForeignKey('Escola.idEscola'))
-    escola = relationship("Escola", back_populates="indicadores")
-    porcentagens = relationship("PorcentagemClassificacaoAlunos", back_populates="indicador")
+class NivelEscolaridade(Base):
+    __tablename__ = 'NivelEscolariade'
+    idEscolaridadePais = Column(Integer, primary_key=True)
+    escolaridade = Column(String, nullable=False)
+    classificacoes_se = relationship("ClassificacaoSocioEconomica", back_populates="escolaridade_pais")
 
 class ClassificacaoSocioEconomica(Base):
-    _tablename_ = 'ClassificacaoSocioEconomica'
+    __tablename__ = 'ClassificacaoSocioEconomica'
     idClassificacaoSE = Column(Integer, primary_key=True)
-    qtdQuartos = Column(Integer)
-    qtdCelulares = Column(Integer)
-    qtdGeladeiras = Column(Integer)
-    qtdTelevisores = Column(Integer)
-    qtdBanheiros = Column(Integer)
-    idEscolaridadePais = Column(Integer, ForeignKey('NivelEscolariade.idEscolaridadePais'))
-    escolaridade_pais = relationship("NivelEscolariade", back_populates="classificacoes")
-    porcentagens = relationship("PorcentagemClassificacaoAlunos", back_populates="classificacao")
+    qtdQuartos = Column(Integer, nullable=False)
+    qtdCelulares = Column(Integer, nullable=False)
+    qtdGeladeiras = Column(Integer, nullable=False)
+    qtdTelevisores = Column(Integer, nullable=False)
+    qtdBanheiros = Column(Integer, nullable=False)
+    idEscolaridadePais = Column(Integer, ForeignKey('NivelEscolariade.idEscolaridadePais'), nullable=False)
+    escolaridade_pais = relationship("NivelEscolaridade", back_populates="classificacoes_se")
+    porcentagens_alunos = relationship("PorcentagemClassificacaoAlunos", back_populates="classificacao_se")
 
-class NivelEscolariade(Base):
-    _tablename_ = 'NivelEscolariade'
-    idEscolaridadePais = Column(Integer, primary_key=True)
-    escolaridade = Column(String)
-    classificacoes = relationship("ClassificacaoSocioEconomica", back_populates="escolaridade_pais")
+class IndicadoresAlunos(Base):
+    __tablename__ = 'IndicadoresAlunos'
+    idIndicadoresAlunos = Column(Integer, primary_key=True, autoincrement=True)
+    qtdAlunosInse = Column(Integer, nullable=False)
+    anoMedicao = Column(Integer, nullable=False)
+    idEscola = Column(String, ForeignKey('Escola.idEscola'), nullable=False)
+    escola = relationship("Escola", back_populates="indicadores_alunos")
+    porcentagens_classificacao = relationship("PorcentagemClassificacaoAlunos", back_populates="indicadores_alunos")
 
 class PorcentagemClassificacaoAlunos(Base):
-    _tablename_ = 'PorcentagemClassificacaoAlunos'
-    idPorcentagem = Column(Integer, primary_key=True)
-    idIndicadoresAlunos = Column(Integer, ForeignKey('IndicadoresAlunos.idIndicadoresAlunos'))
-    idClassificacaoSE = Column(Integer, ForeignKey('ClassificacaoSocioEconomica.idClassificacaoSE'))
-    porcentagemAlunos = Column(Double)
-    indicador = relationship("IndicadoresAlunos", back_populates="porcentagens")
-    classificacao = relationship("ClassificacaoSocioEconomica", back_populates="porcentagens")
-
-class TaxasAprovacao(Base):
-    _tablename_ = 'TaxasAprovacao'
-    idTaxasAprovacao = Column(Integer, primary_key=True)
-    idEscola = Column(String, ForeignKey('Escola.idEscola'))
-    anoMedicao = Column(Integer)
-    total = Column(Double)
-    escola = relationship("Escola", back_populates="taxas_aprovacao")
-    aprovacoes_serie = relationship("AprovacaoSerie", back_populates="taxa_aprovacao")
+    __tablename__ = 'PorcentagemClassificacaoAlunos'
+    idPorcentagem = Column(Integer, primary_key=True, autoincrement=True)
+    idIndicadoresAlunos = Column(Integer, ForeignKey('IndicadoresAlunos.idIndicadoresAlunos'), nullable=False)
+    idClassificacaoSE = Column(Integer, ForeignKey('ClassificacaoSocioEconomica.idClassificacaoSE'), nullable=False)
+    porcentagemAlunos = Column(Double, nullable=False)
+    indicadores_alunos = relationship("IndicadoresAlunos", back_populates="porcentagens_classificacao")
+    classificacao_se = relationship("ClassificacaoSocioEconomica", back_populates="porcentagens_alunos")
 
 class NotaIDEB(Base):
-    _tablename_ = 'NotaIDEB'
-    idIdeb = Column(Integer, primary_key=True)
-    idEscola = Column(String, ForeignKey('Escola.idEscola'))
+    __tablename__ = 'NotaIDEB'
+    idIdeb = Column(Integer, primary_key=True, autoincrement=True)
+    idEscola = Column(String, ForeignKey('Escola.idEscola'), nullable=False)
     notaIdeb = Column(Double)
-    anoMedicao = Column(Integer)
+    anoMedicao = Column(Integer, nullable=False)
     escola = relationship("Escola", back_populates="notas_ideb")
 
 class NotaSAEB(Base):
-    _tablename_ = 'NotaSAEB'
-    idSaeb = Column(Integer, primary_key=True)
-    idEscola = Column(String, ForeignKey('Escola.idEscola'))
+    __tablename__ = 'NotaSAEB'
+    idSaeb = Column(Integer, primary_key=True, autoincrement=True)
+    idEscola = Column(String, ForeignKey('Escola.idEscola'), nullable=False)
     notaMatematica = Column(Double)
     notaLinguaPort = Column(Double)
     notaPadronizada = Column(Double)
-    anoMedicao = Column(Integer)
+    anoMedicao = Column(Integer, nullable=False)
     escola = relationship("Escola", back_populates="notas_saeb")
 
-class AprovacaoSerie(Base):
-    _tablename_ = 'AprovacaoSerie'
-    idAprovacaoSerie = Column(Integer, primary_key=True)
-    serie = Column(Integer)
-    porcentagem = Column(Double)
-    idTaxasAprovacao = Column(Integer, ForeignKey('TaxasAprovacao.idTaxasAprovacao'))
-    taxa_aprovacao = relationship("TaxasAprovacao", back_populates="aprovacoes_serie")
+class TaxasAprovacao(Base):
+    __tablename__ = 'TaxasAprovacao'
+    idTaxasAprovacao = Column(Integer, primary_key=True, autoincrement=True)
+    idEscola = Column(String, ForeignKey('Escola.idEscola'), nullable=False)
+    anoMedicao = Column(Integer, nullable=False)
+    total = Column(Double, nullable=False)
+    escola = relationship("Escola", back_populates="taxas_aprovacao")
+    aprovacoes_serie = relationship("AprovacaoSerie", back_populates="taxas_aprovacao")
 
+class AprovacaoSerie(Base):
+    __tablename__ = 'AprovacaoSerie'
+    idAprovacaoSerie = Column(Integer, primary_key=True, autoincrement=True)
+    serie = Column(Integer, nullable=False)
+    porcentagem = Column(Double, nullable=False)
+    idTaxasAprovacao = Column(Integer, ForeignKey('TaxasAprovacao.idTaxasAprovacao'), nullable=False)
+    taxas_aprovacao = relationship("TaxasAprovacao", back_populates="aprovacoes_serie")
+
+class TipoCapital(Base):
+    __tablename__ = 'TipoCapital'
+    idTipoCapital = Column(Integer, primary_key=True)
+    nome = Column(String, nullable=False)
+    idMunicipio = Column(String, ForeignKey('Município.idMunicipio'), nullable=False)
+    municipio = relationship("Municipio", back_populates="tipos_capital")
 
 # Criar todas as tabelas no banco de dados
 Base.metadata.create_all(engine)

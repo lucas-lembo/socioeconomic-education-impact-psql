@@ -1,3 +1,8 @@
+tipos_capital = {
+    1: 'Capital',
+    2: 'Interior',
+}
+
 niveis_escolaridade = {
     1: "Sem instrução",
     2: "Ensino Fundamental Incompleto",
