@@ -44,6 +44,17 @@ UF_TO_STATE_NAME = {
     'TO': 'Tocantins'
 }
 
+tipos_rede = {
+    1: 'Federal',
+    2: 'Estadual',
+    3: 'Municipal'
+}
+
+tipos_localizacao = {
+    1: 'Urbana',
+    2: 'Rural'
+}
+
 niveis_socio_economicos = {
     1: {
         'qtdGeladeiras': 1,

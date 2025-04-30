@@ -49,8 +49,12 @@ class Escola(Base):
     idEscola = Column(String, primary_key=True)
     idMunicipio = Column(String, ForeignKey('Municipio.idMunicipio'))
     nome = Column(String)
+    idTipoRede = Column(Integer, ForeignKey('TipoRede.idTipoRede'))
+    idTipoLocalizacao = Column(Integer, ForeignKey('TipoLocalizacao.idTipoLocalizacao'))
     
     municipio = relationship("Municipio", back_populates="escolas")
+    tipo_rede = relationship("TipoRede", back_populates="escolas")
+    tipo_localizacao = relationship("TipoLocalizacao", back_populates="escolas")
     indicadores_alunos = relationship("IndicadoresAlunos", back_populates="escola")
     notas_ideb = relationship("NotaIDEB", back_populates="escola")
     notas_saeb = relationship("NotaSAEB", back_populates="escola")
@@ -145,6 +149,22 @@ class AprovacaoSerie(Base):
     
     taxas_aprovacao = relationship("TaxasAprovacao", back_populates="aprovacoes_series")
 
+class TipoLocalizacao(Base):
+    __tablename__ = 'TipoLocalizacao'
+    
+    idTipoLocalizacao = Column(Integer, primary_key=True)
+    nomeTipoLocalizacao = Column(String)
+    
+    escolas = relationship("Escola", back_populates="tipo_localizacao")
+
+class TipoRede(Base):
+    __tablename__ = 'TipoRede'
+    
+    idTipoRede = Column(Integer, primary_key=True)
+    nomeTipoRede = Column(String)
+    
+    escolas = relationship("Escola", back_populates="tipo_rede")
+
 
 # Criar todas as tabelas no banco de dados
 Base.metadata.create_all(engine)
@@ -205,6 +225,18 @@ def incluir_estados():
         session.add(estado)
     print('Estados inseridos!')
 
+def incluir_tipo_localizacao():
+    for codigo, tipo in tipos_localizacao.items():
+        localizacao = TipoLocalizacao(idTipoLocalizacao=codigo, nomeTipoLocalizacao=tipo)
+        session.add(localizacao)
+    print('Localizações adicionadas!')
+
+def incluir_tipo_rede():
+    for codigo, tipo in tipos_rede.items():
+        rede = TipoRede(idTipoRede=codigo, nomeTipoRede=tipo)
+        session.add(rede)
+    print('Redes adicionadas!')
+
 def processar_estados_municipios(df):
     incluir_tipos_capital()
     incluir_estados()
@@ -224,13 +256,17 @@ def processar_estados_municipios(df):
 
 
 def processar_escolas(df):
-    escolas = df[['ID_ESCOLA', 'CO_MUNICIPIO', 'NO_ESCOLA', 'TP_CAPITAL']].drop_duplicates()
+    incluir_tipo_localizacao()
+    incluir_tipo_rede()
+    escolas = df[['ID_ESCOLA', 'CO_MUNICIPIO', 'NO_ESCOLA', 'TP_TIPO_REDE', 'TP_LOCALIZACAO']].drop_duplicates()
     counter = 0
     for _, row in escolas.iterrows():
         escola = Escola(
             idEscola=str(row['ID_ESCOLA']),
             idMunicipio=str(row['CO_MUNICIPIO']),
             nome=row['NO_ESCOLA'],
+            idTipoRede=row['TP_TIPO_REDE'],
+            idTipoLocalizacao=row['TP_LOCALIZACAO']
         )
         session.add(escola)
         print(f'{counter}: Escola {escola.nome} inserida!')

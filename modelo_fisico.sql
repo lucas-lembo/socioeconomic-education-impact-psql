@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS public."AprovacaoSerie"
     "idTaxasAprovacao" serial NOT NULL,
     CONSTRAINT "AprovacaoSerie_pkey" PRIMARY KEY ("idAprovacaoSerie")
 );
-    
+
 CREATE TABLE IF NOT EXISTS public."ClassificacaoSocioEconomica"
 (
     "idClassificacaoSE" integer NOT NULL,
@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS public."Escola"
     "idEscola" character varying COLLATE pg_catalog."default" NOT NULL,
     "idMunicipio" character varying COLLATE pg_catalog."default" NOT NULL,
     nome character varying COLLATE pg_catalog."default" NOT NULL,
+    "idTipoRede" integer NOT NULL,
+    "idTipoLocalizacao" integer NOT NULL,
     CONSTRAINT "Escola_pkey" PRIMARY KEY ("idEscola")
 );
 
@@ -111,6 +113,20 @@ CREATE TABLE IF NOT EXISTS public."TipoCapital"
     CONSTRAINT "TipoCapital_pkey" PRIMARY KEY ("idTipoCapital")
 );
 
+CREATE TABLE IF NOT EXISTS public."TipoRede"
+(
+    "idTipoRede" integer NOT NULL,
+    "nomeTipoRede" character varying NOT NULL,
+    PRIMARY KEY ("idTipoRede")
+);
+
+CREATE TABLE IF NOT EXISTS public."TipoLocalizacao"
+(
+    "idTipoLocalizacao" integer NOT NULL,
+    "nomeTipoLocalizacao" character varying NOT NULL,
+    PRIMARY KEY ("idTipoLocalizacao")
+);
+
 ALTER TABLE IF EXISTS public."AprovacaoSerie"
     ADD CONSTRAINT "idTaxasAprovacao" FOREIGN KEY ("idTaxasAprovacao")
     REFERENCES public."TaxasAprovacao" ("idTaxasAprovacao") MATCH SIMPLE
@@ -135,7 +151,24 @@ ALTER TABLE IF EXISTS public."Escola"
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS pdEscola")
+ALTER TABLE IF EXISTS public."Escola"
+    ADD CONSTRAINT "idTipoRede" FOREIGN KEY ("idTipoRede")
+    REFERENCES public."TipoRede" ("idTipoRede") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."Escola"
+    ADD CONSTRAINT "idTipoLocalizacao" FOREIGN KEY ("idTipoLocalizacao")
+    REFERENCES public."TipoLocalizacao" ("idTipoLocalizacao") MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public."IndicadoresAlunos"
+    ADD CONSTRAINT "idEscola" FOREIGN KEY ("idEscola")
     REFERENCES public."Escola" ("idEscola") MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
