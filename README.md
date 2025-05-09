@@ -3,8 +3,8 @@
 ## Project Overview
 This project was developed by
 <br/>[Mateus Farha Ribeiro](https://github.com/mateusfarhaa)  (252678)
-<br/>[Matheus F. Scatolin](https://github.com/rafael-dosso)  (205237)
-<br/>[Rafael Setton A. de Carvalho](https://github.com/lucas-lembo)  (254467)
+<br/>[Rafael Scalabrin Dosso](https://github.com/rafael-dosso)  (205237)
+<br/>[Lucas Lembo de Lara](https://github.com/lucas-lembo)  (254467)
 
 ## Database Schema Overview
 
@@ -30,18 +30,12 @@ students' socioeconomic levels, and the geographical locations of these schools 
 - [Datasets](#datasets)
   - [Original Data](#original-data)
   - [Preprocessed Data](#preprocessed-data)
-- [Database Schema](#database-schema)
-- [Technology Stack](#technology-stack)
-- [Project Structure](#project-structure)
 - [Setup and Usage](#setup-and-usage)
-  - [Prerequisites](#prerequisites)
   - [Database Setup](#database-setup)
   - [Running the Code](#running-the-code)
 - [Data Preprocessing](#data-preprocessing)
 - [Analysis & Queries](#analysis--queries)
 - [Results](#results)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
 
 ## Datasets
 
@@ -58,3 +52,21 @@ The original datasets were preprocessed (details in [`preprocessing.ipynb`](./pr
 
 *   `desempenho_escolar.csv`
 *   `indicadores_socio_economicos.csv`
+
+### Database Setup
+
+1.  **Create Database:** Using pgAdmin4, create a new PostgreSQL database. The default name used in the script is `Projeto 1`.
+    ```sql
+    CREATE DATABASE "Projeto 1";
+    ```
+2.  **Configure Connection:** Open the [`database_population.ipynb`](./database_population.ipynb). **Update the `DB_PASS` variable** with your actual PostgreSQL password at the connection parameters. Adjust other parameters (user, host, port, dbname) if necessary.
+
+    ```python
+    # --- Database Connection Parameters ---
+    DB_NAME = "Projeto 1"
+    DB_USER = "postgres"
+    DB_HOST = "localhost"
+    DB_PASS = "password" # <--- CHANGE THIS TO YOUR PASSWORD
+    DB_PORT = "5432"
+    ```
+
