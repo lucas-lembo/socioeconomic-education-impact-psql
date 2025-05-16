@@ -44,11 +44,11 @@ JOIN
 JOIN 
     public."NotaSAEB" saeb ON saeb."idEscola" = esc."idEscola"
 JOIN (
-    -- Subconsulta fudida que calcula a média SE por escola já multiplicando pela quantidade de alunos
+    -- Subconsulta que calcula a média SE por escola já multiplicando pela quantidade de alunos
     SELECT 
         ia."idEscola",
         SUM(pca."porcentagemAlunos" * cse."idClassificacaoSE") / 100.0 AS media_se,
-        SUM(ia."qtdAlunosInse") AS total_alunos  -- Aqui eu somei os alunos pra ponderar depois
+        SUM(ia."qtdAlunosInse") AS total_alunos
     FROM 
         public."IndicadoresAlunos" ia
     JOIN 
@@ -56,7 +56,7 @@ JOIN (
     JOIN 
         public."ClassificacaoSocioEconomica" cse ON pca."idClassificacaoSE" = cse."idClassificacaoSE"
     GROUP BY 
-        ia."idEscola"  -- Só agrupei por escola, o resto tá agregado (SUM)
+        ia."idEscola"
 ) se ON se."idEscola" = esc."idEscola"
 WHERE 
     esc."idTipoLocalizacao" = (
