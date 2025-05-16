@@ -69,10 +69,11 @@ The original datasets were preprocessed (details in [`preprocessing.ipynb`](./pr
     DB_PORT = "5432"
     ```
 
-3.  **Populating Database:** To populate the database, run the populate_db script located in [`/scripts/populate_db.py`](./database_population.ipynb), and the dataset data will be inserted into the database tables.
+3.  **Populating Database:** To populate the database, run the populate_db script located in [`/scripts/populate_db.py`](./scripts/populate_db.py), and the dataset data will be inserted into the database tables.
 
 ## Datasets Preprocessing
 
+The preprocessing steps applied to the original datasets can be found in [`/scripts/preprocessing.ipynb`](./scripts/preprocessing.ipynb). This notebook contains a full explanation of the methods used, along with the complete preprocessing code.
 
 ## Analysis & Queries
 The five non-trivial queries are located in the `/queries` directory, and below is a basic explanation of what each one filters and how to interpret the results.
