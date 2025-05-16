@@ -75,6 +75,8 @@ The original datasets were preprocessed (details in [`preprocessing.ipynb`](./pr
 
 
 ## Analysis & Queries
+1. Comparison of SAEB Performance Among Rural Schools Across All States:
+In this query, we observe that states with lower socioeconomic indices tend to have the lowest scores in Portuguese and Mathematics, while states with higher socioeconomic indices achieve the highest scores. This suggests a clear correlation between students’ performance on the SAEB and their socioeconomic conditions.
 
 ## Results
 
