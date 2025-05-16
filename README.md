@@ -89,7 +89,8 @@ This query analyzes how school location (rural vs. urban) affects performance wi
 4. Comparison Between IDEB Scores and Socioeconomic Averages Within the Same School Network Type (State, Municipal, Federal):
 This query examines how IDEB (Basic Education Development Index) scores relate to socioeconomic levels across different types of school networks. We observe that federal schools have the highest IDEB scores, followed by municipal and then state schools. Interestingly, the socioeconomic indices follow the same pattern—federal schools have the highest averages, followed by municipal and state schools. This suggests a strong influence of the school network type on both student performance and socioeconomic status.
 
-5.
+5. Comparison Between Schools in the Same State Located in the Capital vs. the Countryside, and How Socioeconomic Levels Influence Portuguese and Math Scores:
+This query explores the impact of school location, whether in the state capital or the countryside, on academic performance and socioeconomic conditions. We observe that state capitals generally have higher socioeconomic levels than inland areas. Interestingly, this pattern is also reflected in academic outcomes: schools in capital cities tend to have higher Portuguese and Mathematics scores compared to those in the countryside.
 
 ## Results
 
