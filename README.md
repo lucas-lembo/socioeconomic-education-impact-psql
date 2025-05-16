@@ -75,6 +75,8 @@ The original datasets were preprocessed (details in [`preprocessing.ipynb`](./pr
 
 
 ## Analysis & Queries
+The five non-trivial queries are located in the `/queries` directory, and below is a basic explanation of what each one filters and how to interpret the results.
+
 1. Comparison of SAEB Performance Among Rural Schools Across All States:
 In this query, we observe that states with lower socioeconomic indices tend to have the lowest scores in Portuguese and Mathematics, while states with higher socioeconomic indices achieve the highest scores. This suggests a clear correlation between students’ performance on the SAEB and their socioeconomic conditions.
 
