@@ -80,7 +80,8 @@ The five non-trivial queries are located in the `/queries` directory, and below 
 1. Comparison of SAEB Performance Among Rural Schools Across All States:
 In this query, we observe that states with lower socioeconomic indices tend to have the lowest scores in Portuguese and Mathematics, while states with higher socioeconomic indices achieve the highest scores. This suggests a clear correlation between students’ performance on the SAEB and their socioeconomic conditions.
 
-2. 
+2. Comparison of Weighted Average Scores in Portuguese and Mathematics Between Rural and Urban Schools Within the Same State:
+This query analyzes how school location (rural vs. urban) affects performance within the same state. In most cases, we observe that urban areas have higher average socioeconomic levels and also achieve better scores in Portuguese and Mathematics. However, there are a few exceptions where, despite higher socioeconomic averages in urban areas, rural schools perform better in terms of academic scores.
 
 3.
 
