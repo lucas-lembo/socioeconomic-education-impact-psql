@@ -85,7 +85,8 @@ This query analyzes how school location (rural vs. urban) affects performance wi
 
 3.
 
-4. 
+4. Comparison Between IDEB Scores and Socioeconomic Averages Within the Same School Network Type (State, Municipal, Federal):
+This query examines how IDEB (Basic Education Development Index) scores relate to socioeconomic levels across different types of school networks. We observe that federal schools have the highest IDEB scores, followed by municipal and then state schools. Interestingly, the socioeconomic indices follow the same pattern—federal schools have the highest averages, followed by municipal and state schools. This suggests a strong influence of the school network type on both student performance and socioeconomic status.
 
 5.
 
