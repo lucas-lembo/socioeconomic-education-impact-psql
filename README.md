@@ -84,7 +84,8 @@ In this query, we observe that states with lower socioeconomic indices tend to h
 2. Comparison of Weighted Average Scores in Portuguese and Mathematics Between Rural and Urban Schools Within the Same State:
 This query analyzes how school location (rural vs. urban) affects performance within the same state. In most cases, we observe that urban areas have higher average socioeconomic levels and also achieve better scores in Portuguese and Mathematics. However, there are a few exceptions where, despite higher socioeconomic averages in urban areas, rural schools perform better in terms of academic scores.
 
-3.
+3. Comparison between the average SAEB scores in Portuguese and Mathematics and the high school student approval rates over the years 2017, 2019, 2021, and 2023:
+This query shows that between 2019 and 2021, several states experienced a significant decline either in average SAEB scores or in student approval rates. This drop may have been primarily caused by the impact of the COVID-19 pandemic.
 
 4. Comparison Between IDEB Scores and Socioeconomic Averages Within the Same School Network Type (State, Municipal, Federal):
 This query examines how IDEB (Basic Education Development Index) scores relate to socioeconomic levels across different types of school networks. We observe that federal schools have the highest IDEB scores, followed by municipal and then state schools. Interestingly, the socioeconomic indices follow the same pattern—federal schools have the highest averages, followed by municipal and state schools. This suggests a strong influence of the school network type on both student performance and socioeconomic status.
