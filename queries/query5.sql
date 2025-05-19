@@ -35,9 +35,9 @@ base_completa AS (
         se."anoMedicao",
         se.media_se,
         se.total_alunos,
-        sa.notaMatematica,
-        sa.notaLinguaPort,
-        sa.notaPadronizada
+        sa."notaMatematica",
+        sa."notaLinguaPort",
+        sa."notaPadronizada"
     FROM socioeconomico_escola se
     JOIN escola_localizacao sl ON se."idEscola" = sl."idEscola"
     JOIN saeb_escola sa ON se."idEscola" = sa."idEscola" AND se."anoMedicao" = sa."anoMedicao"
@@ -45,11 +45,25 @@ base_completa AS (
 SELECT
     uf,
     tipo_capital,
-    anoMedicao,
-    ROUND(SUM(media_se * total_alunos) / NULLIF(SUM(total_alunos), 0), 2) AS media_ponderada_se,
-    ROUND(SUM(notaMatematica * total_alunos) / NULLIF(SUM(total_alunos), 0), 2) AS media_ponderada_matematica,
-    ROUND(SUM(notaLinguaPort * total_alunos) / NULLIF(SUM(total_alunos), 0), 2) AS media_ponderada_lingua,
-    ROUND(SUM(notaPadronizada * total_alunos) / NULLIF(SUM(total_alunos), 0), 2) AS media_ponderada_padronizada
+    base_completa."anoMedicao",
+    ROUND(
+        (SUM(media_se * total_alunos) / NULLIF(SUM(total_alunos), 0))::numeric
+    , 2) AS media_ponderada_se,
+    
+    ROUND(
+        (SUM(CASE WHEN "notaMatematica" IS NOT NULL THEN "notaMatematica" * total_alunos ELSE 0 END) /
+        NULLIF(SUM(CASE WHEN "notaMatematica" IS NOT NULL THEN total_alunos ELSE 0 END), 0))::numeric
+    , 2) AS media_ponderada_matematica,
+    
+    ROUND(
+        (SUM(CASE WHEN "notaLinguaPort" IS NOT NULL THEN "notaLinguaPort" * total_alunos ELSE 0 END) /
+        NULLIF(SUM(CASE WHEN "notaLinguaPort" IS NOT NULL THEN total_alunos ELSE 0 END), 0))::numeric
+    , 2) AS media_ponderada_lingua,
+    
+    ROUND(
+        (SUM(CASE WHEN "notaPadronizada" IS NOT NULL THEN "notaPadronizada" * total_alunos ELSE 0 END) /
+        NULLIF(SUM(CASE WHEN "notaPadronizada" IS NOT NULL THEN total_alunos ELSE 0 END), 0))::numeric
+    , 2) AS media_ponderada_padronizada
 FROM base_completa
-GROUP BY uf, tipo_capital, anoMedicao
-ORDER BY uf, anoMedicao, tipo_capital;
+GROUP BY uf, tipo_capital, base_completa."anoMedicao"
+ORDER BY uf, base_completa."anoMedicao", tipo_capital;

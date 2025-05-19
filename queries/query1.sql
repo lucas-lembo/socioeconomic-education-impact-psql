@@ -1,9 +1,9 @@
 SELECT 
     e.uf,
     est.nome AS nome_estado,
-    AVG(saeb."notaMatematica") AS media_matematica,
-    AVG(saeb."notaLinguaPort") AS media_portugues,
-    SUM(se.media_se * se.total_alunos) / SUM(se.total_alunos) AS media_ponderada_se
+    ROUND(AVG(saeb."notaMatematica")::numeric, 2) AS media_matematica,
+    ROUND(AVG(saeb."notaLinguaPort")::numeric, 2) AS media_portugues,
+    ROUND((SUM(se.media_se * se.total_alunos) / NULLIF(SUM(se.total_alunos), 0))::numeric, 2) AS media_ponderada_se
 FROM 
     public."Escola" esc
 JOIN 
