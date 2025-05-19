@@ -47,7 +47,7 @@ The raw data was sourced from Inep (Instituto Nacional de Estudos e Pesquisas Ed
 
 ### Preprocessed Data
 
-The original datasets were preprocessed (details in [`preprocessing.ipynb`](./preprocessing.ipynb)) to fit the designed database schema. The resulting cleaned CSV files, used for loading into the database, are located in the `/preprocessed_datasets` directory:
+The original datasets were preprocessed (details in [`preprocessing.ipynb`](./scripts/preprocessing.ipynb)) to fit the designed database schema. The resulting cleaned CSV files, used for loading into the database, are located in the `/datasets/preprocessed_datasets` directory:
 
 *   `desempenho_escolar.csv`
 *   `indicadores_socio_economicos.csv`
@@ -58,7 +58,7 @@ The original datasets were preprocessed (details in [`preprocessing.ipynb`](./pr
     ```sql
     CREATE DATABASE "Projeto 1";
     ```
-2.  **Configure Connection:** Update connection parameters at the file [`/scripts/populate_db.py`](./database_population.ipynb). **Update the `DB_PASS` variable** with your actual PostgreSQL password. Adjust other parameters (user, host, port, dbname) if necessary.
+2.  **Configure Connection:** Update connection parameters at the file [`/scripts/populate_db.py`](./scripts/populate_db.py). **Update the `DB_PASS` variable** with your actual PostgreSQL password. Adjust other parameters (user, host, port, dbname) if necessary.
 
     ```python
     # --- Database Connection Parameters ---
