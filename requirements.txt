@@ -1,1 +1,4 @@
 pil
+sqlalchemy
+psycopg2
+pandas

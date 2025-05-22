@@ -58,18 +58,26 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
     ```sql
     CREATE DATABASE "Projeto 1";
     ```
-2.  **Configure Connection:** Update connection parameters at the file [`scripts/populate_db.py`](./scripts/populate_db.py). **Update the `DB_PASS` variable** with your actual PostgreSQL password. Adjust other parameters (user, host, port, dbname) if necessary.
+2.  **Configure Connection:** Create a python file at `scripts/secrets_db.py` and insert the following connection parameters:
 
     ```python
     # --- Database Connection Parameters ---
-    DB_NAME = "Projeto 1"
-    DB_USER = "postgres"
-    DB_HOST = "localhost"
-    DB_PASS = "password" # <--- CHANGE THIS TO YOUR PASSWORD
-    DB_PORT = "5432"
+    BASE_NAME = "Projeto 1"  # Your database name
+    USERNAME = "postgres"  # Your Postgres username
+    HOST = "localhost"
+    PASSWORD = "password" # <--- CHANGE THIS TO YOUR PASSWORD
     ```
 
-3.  **Populating Database:** To populate the database, run the populate_db script located in [`scripts/populate_db.py`](./scripts/populate_db.py), and the dataset data will be inserted into the database tables.
+3.  **Populating Database:** To populate the database with the values within the dataset, you will need to run the population script located in [`scripts/populate_db.py`](./scripts/populate_db.py):
+- Install the Pip dependencies:
+```terminal
+  pip install -r requirements.txt
+```
+- Run the script:
+```terminal
+  python scripts/populate_db.py
+```
+ 
 
 ## Datasets Preprocessing
 
