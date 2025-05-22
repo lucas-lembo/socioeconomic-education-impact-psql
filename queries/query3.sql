@@ -2,8 +2,8 @@ SELECT
     m.uf,
     est.nome AS nome_estado,
     saeb."anoMedicao",
-    AVG(saeb."notaPadronizada") AS media_nota_saeb,
-    AVG(taxas.total) AS media_taxa_aprovacao
+    ROUND(AVG(saeb."notaPadronizada")::numeric, 2) AS media_nota_saeb,
+    ROUND(AVG(taxas.total)::numeric, 2) AS media_taxa_aprovacao
 FROM public."NotaSAEB" saeb
 JOIN public."Escola" e ON saeb."idEscola" = e."idEscola"
 JOIN public."Municipio" m ON e."idMunicipio" = m."idMunicipio"

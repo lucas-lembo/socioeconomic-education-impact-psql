@@ -1,28 +1,28 @@
-"uf","nome_estado","media_matematica","media_portugues","media_ponderada_se"
-"AC","Acre","260.46","259.96","3.27"
-"AL","Alagoas","249.51","250.58","3.17"
-"AP","Amapá","237.50","239.08","3.15"
-"AM","Amazonas","228.57","229.02","2.60"
-"BA","Bahia","246.62","248.79","3.15"
-"CE","Ceará","265.58","265.11","2.89"
-"DF","Distrito Federal","266.96","267.80","4.66"
-"ES","Espírito Santo","289.50","283.17","4.51"
-"GO","Goiás","271.85","268.65","3.94"
-"MA","Maranhão","231.78","234.53","2.77"
-"MT","Mato Grosso","259.85","258.56","4.32"
-"MS","Mato Grosso do Sul","261.13","261.62","4.33"
-"MG","Minas Gerais","263.73","262.00","3.56"
-"PA","Pará","241.65","242.55","2.78"
-"PB","Paraíba","255.58","258.30","3.30"
-"PR","Paraná","276.87","274.75","4.52"
-"PE","Pernambuco","266.29","263.54","3.38"
-"PI","Piauí","248.90","245.36","2.74"
-"RJ","Rio de Janeiro","264.81","266.70","4.32"
-"RN","Rio Grande do Norte","256.41","257.65","3.54"
-"RS","Rio Grande do Sul","277.78","275.97","5.03"
-"RO","Rondônia","259.18","258.25","3.95"
-"RR","Roraima","233.94","230.70","2.69"
-"SC","Santa Catarina","287.13","276.08","5.27"
-"SP","São Paulo","274.55","274.25","4.81"
-"SE","Sergipe","250.51","251.09","2.96"
-"TO","Tocantins","253.07","248.78","3.52"
+uf,nome_estado,media_matematica,media_portugues,media_ponderada_se
+AC,Acre,260.46,259.96,3.27
+AL,Alagoas,249.51,250.58,3.17
+AP,Amapá,237.50,239.08,3.15
+AM,Amazonas,228.57,229.02,2.60
+BA,Bahia,246.62,248.79,3.15
+CE,Ceará,265.58,265.11,2.89
+DF,Distrito Federal,266.96,267.80,4.66
+ES,Espírito Santo,289.50,283.17,4.51
+GO,Goiás,271.85,268.65,3.94
+MA,Maranhão,231.78,234.53,2.77
+MT,Mato Grosso,259.85,258.56,4.32
+MS,Mato Grosso do Sul,261.13,261.62,4.33
+MG,Minas Gerais,263.73,262.00,3.56
+PA,Pará,241.65,242.55,2.78
+PB,Paraíba,255.58,258.30,3.30
+PR,Paraná,276.87,274.75,4.52
+PE,Pernambuco,266.29,263.54,3.38
+PI,Piauí,248.90,245.36,2.74
+RJ,Rio de Janeiro,264.81,266.70,4.32
+RN,Rio Grande do Norte,256.41,257.65,3.54
+RS,Rio Grande do Sul,277.78,275.97,5.03
+RO,Rondônia,259.18,258.25,3.95
+RR,Roraima,233.94,230.70,2.69
+SC,Santa Catarina,287.13,276.08,5.27
+SP,São Paulo,274.55,274.25,4.81
+SE,Sergipe,250.51,251.09,2.96
+TO,Tocantins,253.07,248.78,3.52
