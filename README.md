@@ -34,7 +34,6 @@ students' socioeconomic levels, and the geographical locations of these schools 
     - [Original Data](#original-data)
     - [Preprocessed Data](#preprocessed-data)
     - [Database Setup and Population](#database-setup-and-population)
-- [Datasets Preprocessing](#datasets-preprocessing)
 - [Analysis \& Queries](#analysis--queries)
 - [Results](#results)
 
@@ -54,13 +53,17 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
 *   `desempenho_escolar.csv`
 *   `indicadores_socio_economicos.csv`
 
+The preprocessing steps applied to the original datasets can be found in [`scripts/preprocessing.ipynb`](./scripts/preprocessing.ipynb). This notebook contains a full explanation of the methods used, along with the complete preprocessing code.
+
+
 ### Database Setup and Population
 
 1.  **Create Database:** Using pgAdmin4, create a new PostgreSQL database. The default name used in the script is `Projeto 1`.
     ```sql
     CREATE DATABASE "Projeto 1";
     ```
-2.  **Configure Connection:** Create a python file at `scripts/secrets_db.py` and insert the following connection parameters:
+
+2.  **Configure Connection:** Create a Python file at `scripts/secrets_db.py` and insert the following connection parameters:
 
     ```python
     # --- Database Connection Parameters ---
@@ -71,6 +74,11 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
     ```
 
 3.  **Populating Database:** To populate the database with the values within the dataset, you will need to run the population script located in [`scripts/populate_db.py`](./scripts/populate_db.py):
+- Initialize a Python Virutal Environmnt
+```terminal
+  python -m venv environment
+  source environment/bin/activate
+```
 - Install the Pip dependencies:
 ```terminal
   pip install -r requirements.txt
@@ -79,11 +87,6 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
 ```terminal
   python scripts/populate_db.py
 ```
- 
-
-## Datasets Preprocessing
-
-The preprocessing steps applied to the original datasets can be found in [`scripts/preprocessing.ipynb`](./scripts/preprocessing.ipynb). This notebook contains a full explanation of the methods used, along with the complete preprocessing code.
 
 ## Analysis & Queries
 The five non-trivial queries are located in the `queries/` directory, and below is a basic explanation of what each one filters and how to interpret the results.
