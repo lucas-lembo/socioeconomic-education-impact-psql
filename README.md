@@ -27,14 +27,17 @@ students' socioeconomic levels, and the geographical locations of these schools 
 
 ## Table of Contents
 
-- [Datasets](#datasets)
-  - [Original Data](#original-data)
-  - [Preprocessed Data](#preprocessed-data)
-- [Setup and Usage](#setup-and-usage)
-  - [Database Setup and Population](#database-setup-and-population)
-- [Datasets Preprocessing](#datasets-preprocessing)
-- [Analysis & Queries](#analysis--queries)
-- [Results](#results)
+- [MC536: Database Project - Analysis of Brazilian students' scores in the Basic Education Assessment System (Saeb) in correlation with their socioeconomic status](#mc536-database-project---analysis-of-brazilian-students-scores-in-the-basic-education-assessment-system-saeb-in-correlation-with-their-socioeconomic-status)
+  - [Project Overview](#project-overview)
+  - [Database Schema Overview](#database-schema-overview)
+  - [Table of Contents](#table-of-contents)
+  - [Datasets](#datasets)
+    - [Original Data](#original-data)
+    - [Preprocessed Data](#preprocessed-data)
+    - [Database Setup and Population](#database-setup-and-population)
+  - [Datasets Preprocessing](#datasets-preprocessing)
+  - [Analysis \& Queries](#analysis--queries)
+  - [Results](#results)
 
 ## Datasets
 
@@ -58,7 +61,7 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
     ```sql
     CREATE DATABASE "Projeto 1";
     ```
-2.  **Configure Connection:** Create a python file at `scripts/secrets_db.py` and insert the following connection parameters:
+2.  **Configure Connection:** Create a Python file at `scripts/secrets_db.py` and insert the following connection parameters:
 
     ```python
     # --- Database Connection Parameters ---
@@ -69,6 +72,11 @@ The original datasets, which lie in the `datasets/unprocessed/` folder, were pre
     ```
 
 3.  **Populating Database:** To populate the database with the values within the dataset, you will need to run the population script located in [`scripts/populate_db.py`](./scripts/populate_db.py):
+- Initialize a Python Virutal Environmnt
+```terminal
+  python -m venv environment
+  source environment/bin/activate
+```
 - Install the Pip dependencies:
 ```terminal
   pip install -r requirements.txt
