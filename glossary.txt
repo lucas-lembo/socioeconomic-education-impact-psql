@@ -1,0 +1,8 @@
+Below is a glossary that provides a more detailed explanation of what the tables in our models map:
+
+- Capital Type: The school's area, indicating whether it is located in the Capital or the Interior of a given State.
+- Network Type: The administrative dependency of the school, specifying whether it is Federal, Municipal, or State-run.
+- Location Type: The school's location, indicating whether it is in a rural or urban area of a given city.
+- Student Classification Percentage: The percentage of students in a given school within a certain socioeconomic level (the higher the level, the better the individual's living conditions).
+- Approval Rates: The approval rate of students in a high school.
+- Grade-Level Approval: The approval percentage for each grade level in high school at a given school.
