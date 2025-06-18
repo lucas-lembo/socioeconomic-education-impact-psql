@@ -35,5 +35,5 @@ WHERE
     )
 GROUP BY 
     e.uf, est.nome
-ORDER BY 
-    est.nome;
+ORDER BY
+    media_ponderada_se DESC;
